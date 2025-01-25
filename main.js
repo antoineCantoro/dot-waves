@@ -13,7 +13,7 @@ class App {
     this.createCamera();
     this.createScene();
     this.createMesh();
-    this.createGui();
+    // this.createGui();
     this.createControl();
 
     this.addEventListeners();
@@ -37,24 +37,46 @@ class App {
   }
 
   createCamera() {
-    this.camera = new THREE.PerspectiveCamera( 75, this.sizes.width / this.sizes.height, 0.1, 1000 );
+    this.camera = new THREE.PerspectiveCamera(1, this.sizes.width / this.sizes.height, 0.1, 1000 );
     this.camera.position.z = 5;
     this.camera.updateProjectionMatrix();
   }
 
   createMesh() {
-    this.geometry = new THREE.BoxGeometry( 1, 1, 1 );
-    this.material = new THREE.ShaderMaterial({
+    // this.geometry = new THREE.BoxGeometry( 1, 1, 1 );
+    // this.material = new THREE.ShaderMaterial({
+    //   vertexShader: vertexShader,
+    //   fragmentShader: fragmentShader,
+    //   // wireframe: true,
+    //   uniforms: {
+    //     uTime: { value: 0 },
+    //     uProgress: { value: 0 }
+    //   }
+    // })
+    // this.cube = new THREE.Mesh( this.geometry, this.material );
+    // this.scene.add( this.cube );
+
+    const squareGeo = new THREE.PlaneGeometry(4, 4, 32 * 4, 32 * 4);
+    this.squareMat = new THREE.ShaderMaterial({
       vertexShader: vertexShader,
       fragmentShader: fragmentShader,
+      // wireframe: true,
       // wireframe: true,
       uniforms: {
         uTime: { value: 0 },
         uProgress: { value: 0 }
       }
     })
-    this.cube = new THREE.Mesh( this.geometry, this.material );
-    this.scene.add( this.cube );
+
+    this.planeMesh = new THREE.Mesh(squareGeo, this.squareMat)
+    // this.planeMesh.rotation.z = -Math.PI * 0.2
+    this.planeMesh.rotation.z = Math.PI / 6
+
+    this.scene.add(this.planeMesh)
+
+    const axesHelper = new THREE.AxesHelper( 5 );
+    // this.scene.add( axesHelper );
+
   }
 
   createRenderer() {
@@ -97,9 +119,11 @@ class App {
     window.requestAnimationFrame( this.animate.bind(this) );
 
     this.controls.update();
+
+    this.squareMat.uniforms.uTime.value = performance.now() / 1000
   
-    this.cube.rotation.x += 0.005;
-    this.cube.rotation.y += 0.005;
+    // this.cube.rotation.x += 0.005;
+    // this.cube.rotation.y += 0.005;
   
     this.renderer.render( this.scene, this.camera );
   }
